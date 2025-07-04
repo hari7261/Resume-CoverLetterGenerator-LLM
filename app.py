@@ -1,8 +1,14 @@
 import streamlit as st
 import ollama
-from fpdf import FPDF
 import re
 import os
+# Replace FPDF with ReportLab imports
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 
 # Add a function to clean markdown formatting
 def clean_markdown(text):
@@ -48,30 +54,52 @@ def split_documents(text):
     
     return clean_markdown(resume), clean_markdown(cover_letter)
 
-# Create a function to generate PDFs with proper formatting
+# Create a function to generate PDFs with proper formatting using ReportLab
 def create_pdf(content, filename, title):
-    pdf = FPDF()
-    # Add a Unicode font
-    pdf.add_font('DejaVu', '', os.path.join(os.path.dirname(__file__), 'DejaVuSansCondensed.ttf'), uni=True)
-    pdf.set_font('DejaVu', '', 12)
+    # Setup document with letter size page
+    doc = SimpleDocTemplate(filename, pagesize=letter)
     
-    pdf.add_page()
+    # Create styles
+    styles = getSampleStyleSheet()
+    title_style = styles['Title']
+    normal_style = styles['Normal']
+    normal_style.leading = 14  # Line spacing
+    
+    # Create elements list for document
+    elements = []
+    
     # Add title
-    pdf.set_font('DejaVu', '', 16)
-    pdf.cell(0, 10, title, 0, 1, 'C')
-    pdf.ln(5)
+    elements.append(Paragraph(title, title_style))
+    elements.append(Spacer(1, 12))
     
-    # Reset to normal text size
-    pdf.set_font('DejaVu', '', 12)
+    # Process content paragraphs
+    paragraphs = content.split('\n\n')
+    for para in paragraphs:
+        if not para.strip():
+            continue
+            
+        # Handle bullet points
+        lines = para.split('\n')
+        for line in lines:
+            line = line.strip()
+            if line:
+                if line.startswith('• ') or line.startswith('* '):
+                    # Create bullet point paragraph with indentation
+                    bullet_style = ParagraphStyle(
+                        'bullet',
+                        parent=normal_style,
+                        leftIndent=20,
+                        firstLineIndent=-15
+                    )
+                    elements.append(Paragraph("• " + line[2:], bullet_style))
+                else:
+                    elements.append(Paragraph(line, normal_style))
+        
+        # Add space between paragraphs
+        elements.append(Spacer(1, 10))
     
-    # Add content with proper line breaks
-    for line in content.split('\n'):
-        if line.strip():
-            pdf.multi_cell(0, 8, line)
-        else:
-            pdf.ln(4)
-    
-    pdf.output(filename)
+    # Build the document
+    doc.build(elements)
     return filename
 
 # Check available models
@@ -138,22 +166,30 @@ if st.button("Generate Documents"):
                 # Split and clean the response
                 resume_text, cover_letter_text = split_documents(response["response"])
                 
-                # Check if DejaVu font exists, if not, download it
-                font_path = os.path.join(os.path.dirname(__file__), 'DejaVuSansCondensed.ttf')
-                if not os.path.exists(font_path):
-                    st.warning("Unicode font not found. Using default font which may not display all characters correctly.")
+                # Create PDFs with ReportLab
+                try:
+                    resume_file = create_pdf(resume_text, "resume.pdf", f"{name} - Resume")
+                    cover_letter_file = create_pdf(cover_letter_text, "cover_letter.pdf", f"{name} - Cover Letter")
+                    
+                    # Display download buttons
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        with open(resume_file, "rb") as f:
+                            st.download_button("Download Resume", f, file_name=f"{name}_Resume.pdf")
+                    with col2:
+                        with open(cover_letter_file, "rb") as f:
+                            st.download_button("Download Cover Letter", f, file_name=f"{name}_CoverLetter.pdf")
                 
-                # Create PDFs
-                resume_file = create_pdf(resume_text, "resume.pdf", f"{name} - Resume")
-                cover_letter_file = create_pdf(cover_letter_text, "cover_letter.pdf", f"{name} - Cover Letter")
-                
-                # Display download buttons
-                col1, col2 = st.columns(2)
-                with col1:
-                    st.download_button("Download Resume", open("resume.pdf", "rb"), file_name=f"{name}_Resume.pdf")
-                with col2:
-                    st.download_button("Download Cover Letter", open("cover_letter.pdf", "rb"), file_name=f"{name}_CoverLetter.pdf")
+                except Exception as pdf_error:
+                    st.error(f"Error creating PDF: {str(pdf_error)}")
+                    st.info("Displaying text version instead:")
+                    
+                    # Show text versions if PDF creation fails
+                    with st.expander("Resume (Text Version)"):
+                        st.text(resume_text)
+                    with st.expander("Cover Letter (Text Version)"):
+                        st.text(cover_letter_text)
                 
             except Exception as e:
                 st.error(f"Error generating content: {str(e)}")
-                st.info("Common solutions:\n- Install a Unicode font\n- Check if Ollama service is running\n- Try a different model")
+                st.info("Common solutions:\n- Check if Ollama service is running\n- Try a different model")
