@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume & Cover Letter Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        header {
+            background-color: #4a6fa5;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .feature-item {
+            background-color: #f0f4f8;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        .button {
+            display: inline-block;
+            background-color: #4a6fa5;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #3a5a8f;
+        }
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            margin-top: 2rem;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Resume & Cover Letter Generator with LLM</h1>
+        <p>Create professional job application documents powered by AI</p>
+    </header>
+    
+    <div class="container">
+        <div class="card">
+            <h2>About the Project</h2>
+            <p>
+                This application allows you to generate professional resumes and cover letters using a 
+                locally-running Large Language Model (LLM) through Ollama. Simply enter your personal 
+                information, and the app creates well-formatted PDF documents ready for job applications.
+            </p>
+            <div class="center">
+                <a href="https://github.com/hari7261/Resume-CoverLetterGenerator-LLM" class="button">View on GitHub</a>
+            </div>
+        </div>
+        
+        <h2>Key Features</h2>
+        <div class="feature-grid">
+            <div class="feature-item">
+                <div class="feature-icon">🤖</div>
+                <h3>AI-Powered</h3>
+                <p>Generate content using your local LLMs through Ollama</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">📄</div>
+                <h3>Professional PDFs</h3>
+                <p>Creates well-formatted documents with proper styling</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🔒</div>
+                <h3>Privacy-First</h3>
+                <p>All processing happens locally - your data stays private</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">⚡</div>
+                <h3>Fast & Simple</h3>
+                <p>User-friendly interface built with Streamlit</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🔄</div>
+                <h3>Multiple Models</h3>
+                <p>Works with any text generation model in Ollama</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">💼</div>
+                <h3>Job Ready</h3>
+                <p>Download professional documents ready for applications</p>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Getting Started</h2>
+            <ol>
+                <li>Clone the repository and install dependencies</li>
+                <li>Install and run Ollama with your preferred model</li>
+                <li>Run the application with Streamlit</li>
+                <li>Fill in your information and generate documents</li>
+            </ol>
+            <div class="center">
+                <a href="https://github.com/hari7261/Resume-CoverLetterGenerator-LLM#installation" class="button">See Installation Guide</a>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Created by <a href="https://github.com/hari7261" style="color: white;">Hariom Kumar</a> | Licensed under MIT</p>
+    </footer>
+</body>
+</html>
